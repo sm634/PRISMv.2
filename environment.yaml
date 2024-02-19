@@ -1,4 +1,4 @@
-name: watsonx.rescue_env
+name: prism_v2_env
 channels:
   - defaults
   - conda-forge
