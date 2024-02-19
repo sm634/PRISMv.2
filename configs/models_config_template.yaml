@@ -1,0 +1,35 @@
+# The general hierarchy of the config files is as follows:
+# - model provider: [OPENAI, WATSONX]
+#   - TASK: [ARTICLE_CLASSIFIER, EMBEDDINGS_COMPARISON, PREPROCESS_ARTICLE]
+#       - MODEL_HYPERPARAMETERS: [model_type, max_tokens, min_tokens, decoding_method, temperature, etc.]
+#           - model_type: [gpt-3.5-turbo-0301, FLAN_UL2]
+MODEL_PROVIDER: OPENAI
+TASK: PREPROCESS_ARTICLE
+
+OPENAI:
+    ARTICLE_CLASSIFIER:
+        model_type: gpt-3.5-turbo-0301
+        max_tokens: 1
+        min_tokens: 1
+        decoding_method: GREEDY
+        temperature: 0.0
+    PREPROCESS_ARTICLE:
+        model_type: gpt-3.5-turbo-0301
+        max_tokens: 500
+        min_tokens: 20
+        decoding_method: GREEDY
+        temperature: 0.0
+
+WATSONX:
+    ARTICLE_CLASSIFIER:
+        model_type: FLAN_UL2
+        max_tokens: 1
+        min_tokens: 1
+        decoding_method: GREEDY
+        temperature: 0.0
+    PREPROCESS_ARTICLE:
+        model_type: FLAN_UL2
+        max_tokens: 500
+        min_tokens: 20
+        decoding_method: GREEDY
+        temperature: 0.0

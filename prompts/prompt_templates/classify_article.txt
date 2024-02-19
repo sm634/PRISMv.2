@@ -1,0 +1,12 @@
+Classify the following text into either of type article or type incident.
+
+An article type is more broad and general in its topic content why an incident type focuses on singular incidents
+or events that occurred.
+
+##
+text: {article}
+##
+
+return only the classification type: incident or article. Do not provide anything else.
+
+Classification:

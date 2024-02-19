@@ -1,0 +1,17 @@
+Your job is to extract the article text from the raw_data given.
+Remove any promotional material about the news outlet.
+Print all of the text in the raw_data without the promotional material and nothing else.
+You provided an example below with the desired_output.
+Use the example to help you to extract the output from the raw_data.
+
+example: This story is from April 5, 2013\\\\n\\\\nINDORE: Twenty\\\\n\\\\nworking on hand driven carts were rescued and two people bringing children from Uttar Pradesh to work on daily wages were arrested from criminal Munna Pahalwan's den in Vinoba Nagar here yesterday, the police said today.\\\\n\\\\nDownload The Times of India News App for Latest City News\\\\n\\\\nSubscribe Start Your Daily Mornings with Times of India Newspaper! Order Now\\\\n\\\\nAll children hailing from different parts of Uttar Pradesh below the age of 14 were sent to the Bal Surksha Awas, investigating officer R L Katiza said. The accused who hailed from Bahraich district in UP were booked under Sections 23 and 26 of the Kishore Nyay Adhiniyam and Sections 370 and 371 of the Indian Penal Code, he said. The police also organised an educational class for rescued children before sending them to a relief centre, he said.\\nsummary: This story is from April 5, 2013INDORE: Twentyworking on hand driven carts were rescued and two people bringing children from Uttar Pradesh to work on daily wages were arrested from criminal Munna Pahalwan's den in Vinoba Nagar here yesterday, the police said today.\\\\nDownload The Times of India News App for Latest City NewsSubscribe Start Your Daily Mornings with Times of India Newspaper!\\\\nOrder NowAll children hailing from different parts of Uttar Pradesh below the age of 14 were sent to the Bal Surksha Awas, investigating officer R L Katiza said. The accused who hailed from Bahraich district in UP were booked under Sections 23 and 26 of the Kishore Nyay Adhiniyam and Sections 370 and 371 of the Indian Penal Code, he said. The police also organised an educational class for rescued children before sending them to a relief centre, he said.
+
+desired_output: This story is from April 5, 2013: Twenty working on hand driven carts were rescued and two people bringing children from Uttar Pradesh to work on daily wages were arrested from criminal Munna Pahalwan's den in Vinoba Nagar here yesterday, the police said today. All children hailing from different parts of Uttar Pradesh below the age of 14 were sent to the Bal Surksha Awas, investigating officer R L Katiza said. The accused who hailed from Bahraich district in UP were booked under Sections 23 and 26 of the Kishore Nyay Adhiniyam and Sections 370 and 371 of the Indian Penal Code, he said. The police also organised an educational class for rescued children before sending them to a relief centre, he said.
+
+###
+raw_data: {raw_data}
+###
+
+Return the article without the promotional material. Do not return anything else.
+
+output:

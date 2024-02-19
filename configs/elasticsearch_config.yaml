@@ -1,0 +1,9 @@
+SEARCH_SERVICE: WATSON_DISCOVERY_V2
+WATSON_DISCOVERY_V2:
+  passages:
+    enabled: True
+    per_document: True
+    max_per_document: 2
+    fields: ['subtitle', 'text']
+    find_answers: True
+    characters: 300

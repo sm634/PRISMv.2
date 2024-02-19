@@ -1,0 +1,60 @@
+MODEL_PROVIDER: OPENAI
+OPENAI:
+  ARTICLE_CLASSIFIER:
+    decoding_method: GREEDY
+    max_tokens: 1
+    min_tokens: 1
+    model_type: gpt-3.5-turbo-0301
+    random_seed: null
+    repetition_penalty: null
+    return_options: null
+    stop_sequences: null
+    temperature: 0.0
+    time_limit: null
+    top_k: null
+    top_p: null
+    truncate_input_tokens: null
+  PREPROCESS_ARTICLE:
+    decoding_method: GREEDY
+    max_tokens: 500
+    min_tokens: 20
+    model_type: gpt-3.5-turbo-0301
+    random_seed: null
+    repetition_penalty: null
+    return_options: null
+    stop_sequences: null
+    temperature: 0.0
+    time_limit: null
+    top_k: null
+    top_p: null
+    truncate_input_tokens: null
+TASK: EMBEDDINGS_COMPARISON
+WATSONX:
+  ARTICLE_CLASSIFIER:
+    decoding_method: GREEDY
+    max_tokens: 1
+    min_tokens: 1
+    model_type: FLAN_UL2
+    random_seed: null
+    repetition_penalty: null
+    return_options: null
+    stop_sequences: null
+    temperature: 0.0
+    time_limit: null
+    top_k: null
+    top_p: null
+    truncate_input_tokens: null
+  PREPROCESS_ARTICLE:
+    model_type: FLAN_UL2
+    decoding_method: SAMPLE
+    max_tokens: 500
+    min_tokens: 20
+    top_k: 4
+    top_p: 0.75
+    repetition_penalty: 1
+    temperature: 0.0
+    return_options: null
+    stop_sequences: null
+    time_limit: null
+    random_seed: null
+    truncate_input_tokens: null
