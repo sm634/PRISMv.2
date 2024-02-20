@@ -19,7 +19,7 @@ def prompt_inputs(topic, input_text):
     return {topic: input_text}
 
 
-with open('data/output/query_passage_formatted.json', 'r') as f:
+with open('data/queries/output/query_passage_formatted.json', 'r') as f:
     file_content = f.read()
     file_json = json.loads(file_content)
 

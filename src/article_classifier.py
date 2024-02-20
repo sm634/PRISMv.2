@@ -1,6 +1,5 @@
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from utils.timestamps import get_stamp
 from utils.files_handler import FileHandler
 from utils.models_funcs import get_model
 
@@ -54,11 +53,9 @@ def run_article_classifier():
     """OUTPUT"""
     # standardize the output format.
     sample_articles.set_index('_id', inplace=True)
-    print(sample_articles)
 
-    # format to save file.
-    stamp = get_stamp()
-    output_name = f'sample_classification_{model_name}_{stamp}.csv'
+    # define the output name.
+    output_name = f'sample_classification_{model_name}.csv'
 
     # save the new output to data outputs.
-    file_handler.save_df_to_file(df=sample_articles, file_name=output_name)
+    file_handler.save_df_to_csv(df=sample_articles, file_name=output_name)

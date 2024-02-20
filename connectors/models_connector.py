@@ -22,7 +22,10 @@ class ModelConnector(BaseModelConnector):
             GenParams.MAX_NEW_TOKENS: self.max_tokens,
             GenParams.MIN_NEW_TOKENS: self.min_tokens,
             GenParams.DECODING_METHOD: self.decoding_method,
-            GenParams.TEMPERATURE: self.temperature
+            GenParams.TEMPERATURE: self.temperature,
+            GenParams.TOP_P: self.top_p,
+            GenParams.TOP_K: self.top_k,
+            GenParams.REPETITION_PENALTY: self.repetition_penalty
         }
 
     def instantiate_model(self):

@@ -9,7 +9,6 @@ values have been assigned to the relevant class attributes, these will be inheri
 import os
 
 from ibm_watson_machine_learning.foundation_models.utils.enums import ModelTypes, DecodingMethods
-from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
 
 from dotenv import load_dotenv
 from utils.files_handler import FileHandler
@@ -34,7 +33,7 @@ class BaseModelConnector:
 
         # get models configs
         file_handler = FileHandler()
-        file_handler.get_config()
+        file_handler.get_config('models_config.yaml')
         self.config = file_handler.config
 
         # get the model provider and the task of interest.
@@ -49,6 +48,10 @@ class BaseModelConnector:
                 provider_task = self.config['OPENAI']['ARTICLE_CLASSIFIER']
             elif self.task == 'preprocess_article':
                 provider_task = self.config['OPENAI']['PREPROCESS_ARTICLE']
+            elif self.task == 'text_comparator':
+                provider_task = self.config['OPENAI']['TEXT_COMPARATOR']
+            elif self.task == 'embeddings_comparison':
+                provider_task = self.config['OPENAI']['EMBEDDINGS_COMPARATOR']
 
         elif self.model_provider == 'watsonx':
             # get the watsonx credentials
@@ -60,6 +63,10 @@ class BaseModelConnector:
                 provider_task = self.config['WATSONX']['ARTICLE_CLASSIFIER']
             elif self.task == 'preprocess_article':
                 provider_task = self.config['WATSONX']['PREPROCESS_ARTICLE']
+            elif self.task == 'text_comparator':
+                provider_task = self.config['WATSONX']['TEXT_COMPARATOR']
+            elif self.task == 'embeddings_comparison':
+                provider_task = self.config['WATSONX']['EMBEDDINGS_COMPARATOR']
         else:
             raise
 
@@ -85,13 +92,3 @@ class BaseModelConnector:
         self.top_p = provider_task['top_p']
         self.top_k = provider_task['top_k']
         self.repetition_penalty = provider_task['repetition_penalty']
-
-        self.params = {
-            GenParams.MAX_NEW_TOKENS: self.max_tokens,
-            GenParams.MIN_NEW_TOKENS: self.min_tokens,
-            GenParams.DECODING_METHOD: self.decoding_method,
-            GenParams.TEMPERATURE: self.temperature,
-            GenParams.TOP_P: self.top_p,
-            GenParams.TOP_K: self.top_k,
-            GenParams.REPETITION_PENALTY: self.repetition_penalty
-        }
