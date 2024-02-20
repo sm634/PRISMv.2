@@ -14,11 +14,43 @@ The execution is as follows:
 from utils.discovery_response_handler import extract_query_from_json, get_discovery_data
 from utils.models_funcs import get_model
 from utils.files_handler import FileHandler
-import os
+
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
+import os
+
 file_handler = FileHandler()
+
+
+def prep_passages_for_llms(formatted_json):
+    """
+    A helper function that prepares the data to be passed into the LLM for comparison.
+    :param formatted_json: The input will be the formatted response extracted from the search engine. The hierarchy
+    assumes Dict(collection: {query: passage}) for m-collections and n-query:passage(s) pairs.
+    - collection
+        - query: passage
+    :return: Dict(List) of passages from the different collections and queries to be compared,
+    such as query: [passage1_collection1, passage1_collection2].
+    """
+    # parse the expected dict structure to recombine and return the new output structure.
+    collection_names = list(formatted_json.keys())
+    collection_sample = collection_names[0]
+    queries = list(formatted_json[collection_sample].keys())
+
+    output = {}
+    for collection in collection_names:
+        query_passages_dict = formatted_json[collection]
+        for i, query in enumerate(queries):
+            if query not in output.keys():
+                # Store the passage in a list that is a value to the key, which is the query.
+                output[query] = [query_passages_dict[query]]
+            else:
+                # If that query already has an entry in the dictionary, then append the passage to the list of passages
+                # related to that query.
+                output[query].append(query_passages_dict[query])
+
+    return output
 
 
 def run_policy_comparator(use_existing_outputs=True):
@@ -56,8 +88,6 @@ def run_policy_comparator(use_existing_outputs=True):
         model_name = model_dict['name']
 
         # get the collections and queries.
-        collections = list(discovery_output.keys())
-        collection_sample = collections[0]
-        queries = list(discovery_output[collection_sample].keys())
-        
+        llm_data = prep_passages_for_llms(discovery_output)
 
+        
