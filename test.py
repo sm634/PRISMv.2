@@ -1,44 +1,36 @@
-from connectors.elasticsearch_connector import WatsonDiscoveryV2Connector
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+from utils.timestamps import get_stamp
+from utils.files_handler import FileHandler
+from utils.models_funcs import get_model
+import json
 
-watson_connector_dora = WatsonDiscoveryV2Connector()
-watson_connector_cra = WatsonDiscoveryV2Connector()
+# global variable to process required files for data and prompts.
+file_handler = FileHandler()
 
-query = 'Proportionality Principle'
-print("The query is: ", query)
 
-collection_ids = {
-    "DORA": ["ae5d8b24-7c12-8750-0000-018da2dbd6aa"],
-    "CRA": ["1ca3aab4-6ada-8228-0000-018da2dc9b5a"]
-}
+def prompt_inputs(topic, input_text):
+    """
+    Temporary function for article classifier which takes one argument, which is to be mapped ot the input data.
+    :param topic: The topic/name of the argument to be passed into the prompt template.
+    :param input_text: The input/text that is passed as an article.
+    :return: A dictionary that can be passed to a Langchain run command.
+    """
+    return {topic: input_text}
 
-# set collection
-collection1 = "DORA"
 
-print(f"sending query for {collection1} collection...")
-watson_connector_dora.query_response(
-    query=query,
-    collection_ids=collection_ids["DORA"]
-)
-print("query response received for DORA collection")
+with open('data/output/query_passage_formatted.json', 'r') as f:
+    file_content = f.read()
+    file_json = json.loads(file_content)
 
-DORA_document_passages = watson_connector_dora.get_document_passages()
-DORA_subtitles = watson_connector_dora.get_subtitle()
-DORA_text = watson_connector_dora.get_text()
-DORA_result_metadata = watson_connector_dora.get_result_metadata()
+if isinstance(file_json, str):
+    file_json = json.loads(file_json)
 
-# set collection
-collection2 = "CRA"
+query = "What is the duration of Maternity Leave"
+eu_example = file_json['eu-maternity'][query]
+uk_example = file_json['uk-maternity'][query]
 
-print(f"sending query for {collection2} collection...")
-watson_connector_cra.query_response(
-    query=query,
-    collection_ids=collection_ids["CRA"]
-)
-print("query response received for DORA collection")
-
-CRA_document_passages = watson_connector_cra.get_document_passages()
-CRA_subtitles = watson_connector_cra.get_subtitle()
-CRA_text = watson_connector_cra.get_text()
-CRA_result_metadata = watson_connector_cra.get_result_metadata()
+print(eu_example + "\n\n")
+print(uk_example)
 
 breakpoint()

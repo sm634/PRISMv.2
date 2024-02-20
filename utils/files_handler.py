@@ -2,15 +2,20 @@ import pandas as pd
 import chardet
 import yaml
 import os
+import json
 
 
 class FileHandler:
     def __init__(self):
 
-        # attributes for prompt files.
         self.config = None
+        # attributes for prompt files.
         self.prompt = ''
         self.prompts_folder_path = 'prompts/prompt_templates/'
+
+        # attributes for queries files.
+        self.queries_folder_path = 'queries/'
+        self.queries_json = {}
 
         # attributes for data files.
         self.data = pd.DataFrame()
@@ -40,7 +45,7 @@ class FileHandler:
         """
         # ensure we read a .txt file to get the prompt template.
         assert '.txt' in file_name, ("The file is not of extension .txt. Please ensure it is, or include the extension"
-                                     "in the argument.")
+                                     "in the argument to pass to this function.")
 
         file_path = self.prompts_folder_path + file_name
         # read the file.
@@ -48,6 +53,28 @@ class FileHandler:
             prompt = f.read()
 
         self.prompt = prompt
+
+    def get_queries_from_json(self, file_name):
+        """
+        Retrieves the json file containing the collection metadata and queries from a .json file.
+        :param file_name: the name of the file with the prompt template.
+        'prompt_templates/red_flags_prompts1.txt'
+        :return: the prompt template as string.
+        """
+        # ensure that the file is of type json.
+        assert '.json' in file_name, ("The file is not of extension .json. Please ensure it is, or include the "
+                                      "extension in the argument to pass to this function.")
+
+        file_path = self.queries_folder_path + file_name
+        # read the file and load it as dic.
+        with open(file_path, 'r') as f:
+            queries_json = f.read()
+            queries_json = json.loads(queries_json)
+
+        if isinstance(queries_json, str):
+            queries_json = json.loads(queries_json)
+
+        self.queries_json = queries_json
 
     def get_data_from_file(self, file_name):
         """
