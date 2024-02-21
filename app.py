@@ -9,7 +9,7 @@ config = file_handler.config
 # Define configuration options
 config_options = {
     "MODEL_PROVIDERS": ['OPENAI', 'WATSONX'],
-    "TASK": ["ARTICLE_CLASSIFIER", "EMBEDDINGS_COMPARISON", "PREPROCESS_ARTICLE"]
+    "TASK": ["ARTICLE_CLASSIFIER", "EMBEDDINGS_COMPARISON", "PREPROCESS_ARTICLE", "TEXT_COMPARATOR"]
 }
 
 # Streamlit UI components
@@ -30,8 +30,8 @@ def run_script():
 if st.button("Run Script"):
     config["MODEL_PROVIDER"] = model_provider
     config["TASK"] = task
-    st.write("UPDATING CONFIG")
+    st.subheader("UPDATING CONFIG")
     file_handler.write_config(config)
-    st.write("RUNNING SCRIPT")
+    st.subheader("RUNNING SCRIPT...")
     run_script()
-    st.write("FINISHED TASK")
+    st.subheader("FINISHED TASK")

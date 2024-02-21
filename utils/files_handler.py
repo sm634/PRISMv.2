@@ -169,16 +169,16 @@ class FileHandler:
             with open(config_path, 'r') as file:
                 self.config = yaml.safe_load(file)
 
-    def write_config(self, config_file_name='models_config.yaml'):
+    def write_config(self, config, config_file_name='models_config.yaml'):
         # get the correct file.
         if '.yaml' in config_file_name:
-            config = self.config_folder_path + config_file_name
+            config_path = self.config_folder_path + config_file_name
         else:
-            config = self.config_folder_path + config_file_name + '.yaml'
+            config_path = self.config_folder_path + config_file_name + '.yaml'
 
         try:
             # write the configs to the relative path file
-            with open(config, 'w') as file:
+            with open(config_path, 'w') as file:
                 yaml.dump(config, file)
             file.close()
 

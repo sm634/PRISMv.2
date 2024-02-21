@@ -31,7 +31,7 @@ def instantiate_collections_discovery_instances(queries_json_input: str, return_
     """
     Provide the desired collections for which a Discovery instance is to be instantiated.
     :param queries_json_input: The json file name with queries and collections metadata to be read and parsed.
-    :param return_all bool: An option to return all the extracted collections metadata, queries and the instantiated
+    :param return_all: BOOL An option to return all the extracted collections metadata, queries and the instantiated
     discovery instances.
     return: Dict of collection: discovery_instance object for each collection.
     """
@@ -53,7 +53,7 @@ def get_discovery_responses(queries_json_input: str, save_output: bool = True):
     A function that is used to connect to the discovery instances per collection with the required queries and
     extracting some information from that to store in a new dict/json format.
     :param queries_json_input: The json file name with queries and collections metadata to be read and parsed.
-    :param save_output bool: If true, save the output to a json file in data/output.
+    :param save_output: Bool If true, save the output to a json file in data/output.
     return Dict: Discovery response json.
     """
     # instantiate the discovery instances.
