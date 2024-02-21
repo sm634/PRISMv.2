@@ -108,9 +108,9 @@ class FileHandler:
         stamp = get_stamp()
         # make sure the .csv extension is not being appended to.
         if '.csv' in file_name:
-            file_name.replace('.csv', '')
+            file_name = file_name.replace('.csv', '')
 
-        file_name = file_name + stamp
+        file_name = file_name + '_' + stamp
         file_name = file_name + '.csv'
         file_path = self.data_output_folder_path + file_name
         df.to_csv(file_path, encoding='UTF-8', index=False)

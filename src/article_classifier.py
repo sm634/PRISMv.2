@@ -45,7 +45,7 @@ def run_article_classifier():
     new_col = model_name + '_classification'
     # apply the model on the sample articles and store in a new column.
     sample_articles[new_col] = sample_articles['article'].apply(lambda x:
-                                                                llm_chain.run(
+                                                                llm_chain.invoke(
                                                                     prompt_inputs('article', x)
                                                                 )
                                                                 )

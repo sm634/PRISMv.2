@@ -30,8 +30,8 @@ OPENAI:
     truncate_input_tokens: null
   TEXT_COMPARATOR:
     model_type: gpt-3.5-turbo-0301
-    decoding_method: SAMPLE
-    max_tokens: 200
+    decoding_method: GREEDY
+    max_tokens: 300
     min_tokens: 50
     top_k: 5
     top_p: 0.75
@@ -75,10 +75,10 @@ WATSONX:
   TEXT_COMPARATOR:
     model_type: LLAMA_2_70B_CHAT
     decoding_method: SAMPLE
-    max_tokens: 200
-    min_tokens: 50
-    top_k: 5
-    top_p: 0.75
+    max_tokens: 300
+    min_tokens: 0
+    top_k: 4
+    top_p: 1
     repetition_penalty: 1
     temperature: 0.0
     return_options: null

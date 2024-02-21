@@ -11,9 +11,10 @@ The execution is as follows:
 2. Retrieve the relevant chunks or documents have been retrieved from from the separate collections.
 3. Compare those chunks to one another, per query and identify similarities and differences using a suitable LLM.
 """
-from utils.discovery_response_handler import extract_query_from_json, get_discovery_data
+from utils.discovery_response_handler import get_discovery_data
 from utils.models_funcs import get_model
 from utils.files_handler import FileHandler
+from utils.preprocess_text import StandardTextCleaner
 
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -36,13 +37,14 @@ def prompt_inputs(topic1, passage1, topic2, passage2):
     return {topic1: passage1, topic2: passage2}
 
 
-def prep_passages_for_llms(formatted_json):
+def prep_passages_for_llms(formatted_json, clean_passages=True):
     """
     A helper function that prepares the data to be passed into the LLM for comparison.
     :param formatted_json: The input will be the formatted response extracted from the search engine. The hierarchy
     assumes Dict(collection: {query: passage}) for m-collections and n-query:passage(s) pairs.
     - collection
         - query: passage
+    :param clean_passages: Bool if true, uses standard text cleaner to remove special characters from the text.
     :return: Dict(List) of passages from the different collections and queries to be compared,
     such as query: [passage1_collection1, passage1_collection2].
     """
@@ -51,17 +53,27 @@ def prep_passages_for_llms(formatted_json):
     collection_sample = collection_names[0]
     queries = list(formatted_json[collection_sample].keys())
 
+    # instantiate the standard text cleaner.
+    standard_text_cleaner = StandardTextCleaner()
+
     output = {}
     for collection in collection_names:
         query_passages_dict = formatted_json[collection]
         for i, query in enumerate(queries):
+            # first clean each passage if that option is on.
+            if clean_passages:
+                passage = standard_text_cleaner.remove_special_characters(query_passages_dict[query])
+            else:
+                passage = query_passages_dict[query]
+
+            # Start storing the passage.
             if query not in output.keys():
                 # Store the passage in a list that is a value to the key, which is the query.
-                output[query] = [query_passages_dict[query]]
+                output[query] = [passage]
             else:
                 # If that query already has an entry in the dictionary, then append the passage to the list of passages
                 # related to that query.
-                output[query].append(query_passages_dict[query])
+                output[query].append(passage)
 
     return output
 
@@ -115,26 +127,32 @@ def run_policy_comparator(use_existing_outputs=True):
         llm_analyses = []
         passages_collection1 = []
         passage_collection2 = []
-        for query in list(llm_data.keys()):
+        queries = list(llm_data.keys())
+        for query in queries:
             # prepare the passages by extracting it from the dict(list).
             passage_1 = llm_data[query][0]
             passage_2 = llm_data[query][1]
             passages_collection1.append(passage_1)
             passage_collection2.append(passage_2)
 
-            llm_analysis = llm_chain.run(
+            llm_analysis = llm_chain.invoke(
                 prompt_inputs('passage1', passage_1, 'passage2', passage_2)
             )
+            # As the llm_chain.invoke function returns a dict with the input variables and the text returned by llm,
+            # we will only keep the text that is returned.
+            llm_analyses.append(llm_analysis['text'])
 
-            llm_analyses.append(llm_analysis)
-
-        df = pd.DataFrame({
+        df = pd.DataFrame(
+            {
+                           'query': queries,
                            'eu_maternity_passage': passages_collection1,
                            'uk_maternity_passage': passage_collection2,
                            'llm_analysis': llm_analyses
-                           })
+            }
+        )
 
-        file_handler.save_df_to_csv(df=df, file_name='text_comparator.csv')
+        output_file_name = f'text_comparator_{model_name}'
+        file_handler.save_df_to_csv(df=df, file_name=output_file_name)
 
 
 run_policy_comparator()
