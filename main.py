@@ -2,6 +2,7 @@ import yaml
 from src.article_classifier import run_article_classifier
 from src.embeddings import run_embeddings_comparison
 from src.preprocess_pipeline import run_preprocess_pipeline
+from src.text_comparator import run_text_comparator
 
 
 def main():
@@ -17,6 +18,8 @@ def main():
         run_embeddings_comparison()
     elif task == 'preprocess_article':
         run_preprocess_pipeline(use_standard_cleaner=False, use_denoiser=True)
+    elif task == 'text_comparator':
+        run_text_comparator()
 
     print("Task Complete")
 
