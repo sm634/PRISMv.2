@@ -22,9 +22,6 @@ zip_test_list = list(zip_test)
 
 dictionary = {'example': 'give me one', 'example2': 'give me two'}
 
-if 'dummy' in dictionary.keys():
-    print("It is there!")
-else:
-    print("Its not there unfortunately!")
+print(len(dictionary.keys()))
 
 breakpoint()

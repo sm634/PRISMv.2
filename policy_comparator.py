@@ -17,10 +17,23 @@ from utils.files_handler import FileHandler
 
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+import pandas as pd
 
 import os
 
 file_handler = FileHandler()
+
+
+def prompt_inputs(topic1, passage1, topic2, passage2):
+    """
+    Temporary function for the policy comparator which takes two arguments, which is mapped to the input data.
+    :param topic1: The topic/name of the argument to be passed into the prompt template.
+    :param passage1: The passage that is passed as the first comparator.
+    :param topic2: The topic/name of the second argument to be passed into the prompt template.
+    :param passage2: The 2nd passage that is passed as the 2nd comparator.
+    :return: A dictionary that can be passed to a Langchain run command.
+    """
+    return {topic1: passage1, topic2: passage2}
 
 
 def prep_passages_for_llms(formatted_json):
@@ -90,4 +103,38 @@ def run_policy_comparator(use_existing_outputs=True):
         # get the collections and queries.
         llm_data = prep_passages_for_llms(discovery_output)
 
-        
+        # prepare the prompt template.
+        prompt_file = file_handler.get_prompt_template(file_name='compare_text.txt')
+        prompt_template = PromptTemplate.from_template(prompt_file)
+
+        # instantiate model with prompt.
+        llm_chain = LLMChain(prompt=prompt_template, llm=model)
+
+        # run the llm on all passages.
+        """THIS IS TEMPORARY CODE THAT NEEDS TO BE GENERALIZABLE FOR MORE THAN TWO PASSAGES"""
+        llm_analyses = []
+        passages_collection1 = []
+        passage_collection2 = []
+        for query in list(llm_data.keys()):
+            # prepare the passages by extracting it from the dict(list).
+            passage_1 = llm_data[query][0]
+            passage_2 = llm_data[query][1]
+            passages_collection1.append(passage_1)
+            passage_collection2.append(passage_2)
+
+            llm_analysis = llm_chain.run(
+                prompt_inputs('passage1', passage_1, 'passage2', passage_2)
+            )
+
+            llm_analyses.append(llm_analysis)
+
+        df = pd.DataFrame({
+                           'eu_maternity_passage': passages_collection1,
+                           'uk_maternity_passage': passage_collection2,
+                           'llm_analysis': llm_analyses
+                           })
+
+        file_handler.save_df_to_csv(df=df, file_name='text_comparator.csv')
+
+
+run_policy_comparator()
