@@ -13,14 +13,14 @@ class StandardTextCleaner:
 
     @staticmethod
     def remove_special_characters(text):
+        # remove markdown
+        text = re.sub(r'<[^>]+>', '', text)
+
         # Remove special characters
         text = re.sub(r'[^a-zA-Z0-9\s@.]', '', text)
 
         # Remove non-English characters
         text = ''.join(char for char in text if char in string.ascii_letters or char.isspace() or char in "@.")
-
-        # Remove email addresses
-        text = re.sub(r'\S+@\S+', '', text)
 
         return text
 
@@ -53,7 +53,7 @@ class TextDenoiser:
 
         llm_chain = LLMChain(prompt=prompt_template, llm=llm_model)
 
-        output = llm_chain.run(
+        output = llm_chain.invoke(
             self.__prompt_inputs('raw_data', input_text)
         )
         return output

@@ -24,7 +24,7 @@ class WatsonDiscoveryV2Connector:
 
         # get passage details from config
         file_handler = FileHandler()
-        file_handler.get_config(config_type='elasticsearch')
+        file_handler.get_config(config_file_name='elasticsearch_config')
         self.config = file_handler.config
 
         # get parameter values after parsing config.

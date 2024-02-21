@@ -1,4 +1,4 @@
-MODEL_PROVIDER: OPENAI
+MODEL_PROVIDER: WATSONX
 OPENAI:
   ARTICLE_CLASSIFIER:
     decoding_method: GREEDY
@@ -28,7 +28,21 @@ OPENAI:
     top_k: null
     top_p: null
     truncate_input_tokens: null
-TASK: EMBEDDINGS_COMPARISON
+  TEXT_COMPARATOR:
+    model_type: gpt-3.5-turbo-0301
+    decoding_method: GREEDY
+    max_tokens: 300
+    min_tokens: 50
+    top_k: 5
+    top_p: 0.75
+    repetition_penalty: 1
+    temperature: 0.0
+    return_options: null
+    stop_sequences: null
+    time_limit: null
+    random_seed: null
+    truncate_input_tokens: null
+TASK: TEXT_COMPARATOR
 WATSONX:
   ARTICLE_CLASSIFIER:
     decoding_method: GREEDY
@@ -51,6 +65,20 @@ WATSONX:
     min_tokens: 20
     top_k: 4
     top_p: 0.75
+    repetition_penalty: 1
+    temperature: 0.0
+    return_options: null
+    stop_sequences: null
+    time_limit: null
+    random_seed: null
+    truncate_input_tokens: null
+  TEXT_COMPARATOR:
+    model_type: LLAMA_2_70B_CHAT
+    decoding_method: SAMPLE
+    max_tokens: 300
+    min_tokens: 0
+    top_k: 4
+    top_p: 1
     repetition_penalty: 1
     temperature: 0.0
     return_options: null

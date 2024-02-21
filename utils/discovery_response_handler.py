@@ -87,11 +87,10 @@ def get_discovery_responses(queries_json_input: str, save_output: bool = True):
 
     # needs to be reimplemented with file handler, including timestamp.
     if save_output:
-        import json
-        # Get json of query responses
-        query_responses = json.dumps(all_responses)
-        with open('data/output/query_responses.json', 'w') as file:
-            json.dump(query_responses, file)
+        file_handler.save_to_json(
+            all_responses,
+            file_name='query_responses'
+        )
 
     return all_responses
 
@@ -150,10 +149,10 @@ def format_response_output(
 
     # needs to be reimplemented with file handler, including timestamp.
     if save_output:
-        import json
-        output_response = json.dumps(formatted_response_output)
-        with open('data/output/query_passage_formatted.json', 'w') as file:
-            json.dump(output_response, file)
+        file_handler.save_to_json(
+            data=formatted_response_output,
+            file_name='query_passage_formatted'
+        )
 
     return formatted_response_output
 
@@ -170,7 +169,8 @@ def get_discovery_data(
     # get the initial un-formatted discovery responses.
     discovery_responses = get_discovery_responses(
         queries_json_input,
-        save_output=save_output)
+        save_output=save_output
+    )
 
     # get the formatted discovery responses.
     formatted_discovery_responses = format_response_output(

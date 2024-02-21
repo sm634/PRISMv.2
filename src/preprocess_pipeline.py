@@ -1,7 +1,6 @@
 from utils.preprocess_text import TextDenoiser, StandardTextCleaner
 from utils.models_funcs import get_model
 from utils.files_handler import FileHandler
-from utils.timestamps import get_stamp
 
 file_handler = FileHandler()
 
@@ -43,10 +42,9 @@ def run_preprocess_pipeline(use_standard_cleaner=False, use_denoiser=True):
         )
         print("Denoiser model preprocessing complete.")
 
-    # format output.
-    stamp = get_stamp()
-    output_file_name = f'cleaned_articles_{stamp}.csv'
-    file_handler.save_df_to_file(
+    # output name.
+    output_file_name = f'cleaned_articles.csv'
+    file_handler.save_df_to_csv(
         df=sample_articles,
         file_name=output_file_name
     )
