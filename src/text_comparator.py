@@ -78,7 +78,7 @@ def prep_passages_for_llms(formatted_json, clean_passages=True):
     return output
 
 
-def run_policy_comparator(use_existing_outputs=True):
+def run_text_comparator(use_existing_outputs=True):
     """
     A function to run the policy comparator.
     """
@@ -153,6 +153,3 @@ def run_policy_comparator(use_existing_outputs=True):
 
         output_file_name = f'text_comparator_{model_name}'
         file_handler.save_df_to_csv(df=df, file_name=output_file_name)
-
-
-run_policy_comparator()
