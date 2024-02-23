@@ -8,8 +8,26 @@ config = file_handler.config
 
 # Define configuration options
 config_options = {
-    "MODEL_PROVIDERS": ['OPENAI', 'WATSONX'],
-    "TASK": ["ARTICLE_CLASSIFIER", "EMBEDDINGS_COMPARISON", "PREPROCESS_ARTICLE", "TEXT_COMPARATOR"]
+    "MODEL_PROVIDERS": ['WATSONX', 'OPENAI'],
+    "TASK": ["ARTICLE_CLASSIFIER",
+             "EMBEDDINGS_COMPARISON",
+             "PREPROCESS_ARTICLE",
+             "TEXT_COMPARATOR"]
+}
+models_config = {
+    'OPENAI':
+        {
+            'model': ['gpt-3.5-turbo-0301']
+        },
+    'WATSONX':
+        {
+            'model': ['LLAMA_2_70B_CHAT',
+                      'LLAMA_2_13B_CHAT',
+                      'GRANITE_13B_CHAT_V2',
+                      'GRANITE_13B_CHAT_INSTRUCT_V2',
+                      'FLAN_UL2',
+                      'MTP_7B_INSTRUCT2']
+        }
 }
 
 # Streamlit UI components
@@ -18,6 +36,10 @@ st.title("Configuration Selector")
 # the config needs to be updated based on what is selected in the UI here.
 model_provider = st.selectbox("MODEL PROVIDER", config_options['MODEL_PROVIDERS'])
 task = st.selectbox("TASK", config_options["TASK"])
+if model_provider == 'OPENAI':
+    model = st.selectbox("Model", models_config["OPENAI"]["model"])
+elif model_provider == 'WATSONX':
+    model = st.selectbox("Model", models_config["WATSONX"]["model"])
 
 
 # Function to run Python script with selected option
