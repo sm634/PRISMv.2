@@ -1,0 +1,11 @@
+VECTOR_STORE: Milvus
+MILVUS:
+  INDEX_BUILDING_PARAMS:
+    index_type: FLAT
+    metric_type: COSINE
+    params: {}
+  SEARCH_PARAMS:
+    metric_type: COSINE
+    offset: 0
+    ignore_growing: False
+    params: {}
