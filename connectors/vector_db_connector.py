@@ -34,25 +34,33 @@ class MilvusConnector:
 
         # instantiating the class will connect to the server instance of Zilliz cloud cluster specified
         # in the .env file and stored in self.zilliz_uri and self.token attributes.
+
+    def connect_to_db(self):
         connections.connect(self.server,
                             uri=self.zilliz_uri,
                             token=self.token)
         print(f"Connected to DB: {self.zilliz_uri}")
+
+    def disconnect(self):
+        connections.disconnect(self.server)
 
     def set_collection_name(self, collection_name):
         """A function to assign the collection name. Otherwise, it will be called
         default_collection"""
         self.collection_name = collection_name
 
-    def drop_collect(self):
+    def drop_collection(self, if_exists=True):
         # first connect to DB.
         # check to see if collection exists.
-        check_collection = utility.has_collection(self.collection_name)
-        if check_collection:
-            drop_result = utility.drop_collection(self.collection_name)
-            print(f"Success! collection {self.collection_name} has been dropped.")
+        if if_exists:
+            check_collection = utility.has_collection(self.collection_name)
+            if check_collection:
+                utility.drop_collection(self.collection_name)
+                print(f"Success! collection {self.collection_name} has been dropped.")
+            else:
+                print(f"No such collection exists in DB {self.zilliz_uri}.")
         else:
-            print(f"No such collection exists in DB {self.zilliz_uri}")
+            utility.drop_collection(self.collection_name)
 
     def create_default_schema(self,
                               primary_id: str,
@@ -128,7 +136,7 @@ class MilvusConnector:
         if isinstance(self.collection, type(None)):
             print("""Please create the collection first using the .create_collection method""")
             sys.exit()
-            
+
         else:
             self.collection.load()
             results = self.collection.search(
