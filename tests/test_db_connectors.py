@@ -1,6 +1,6 @@
 import random
 import time
-from PRISMv.2.connectors.vector_db_connector import MilvusConnector
+from connectors.vector_db_connector import MilvusConnector
 
 
 def test_milvus_connector():
@@ -11,6 +11,7 @@ def test_milvus_connector():
     (iii) loading the collection to conduct search.
     """
     milvus_connector = MilvusConnector()
+    breakpoint()
     milvus_connector.connect_to_db()
     # we will create a test collection.
     field_name = 'dummy_embeddings'  # the name of the vector field.
@@ -26,18 +27,18 @@ def test_milvus_connector():
     )  # create a default schema for the collection.
     milvus_connector.create_collection()  # create the collection using the dummy schema.
 
-    print("Creating Collection Index")
-    milvus_connector.create_index(field_name=field_name)  # build index for the collection just created.
-
     print("Inserting dummy data into the collection.")
     # define some parameters.
     nb = 1000
     start = 0  # first primary key id.
     collection = milvus_connector.collection
+    schema = milvus_connector.schema
+    print(f"Uploaded schema: {schema}")
 
-    primary_ids = [i for i in range(start, start + nb)]
+    # primary_ids = [i for i in range(start, start + nb)]
     vector_field = [[random.random() for _ in range(dim)] for _ in range(nb)]
-    entities = [primary_ids, vector_field]
+    entities = [vector_field]  # since we are using auto_id generator to create the default schema, only the vector
+    # field needs to be passed.
 
     t0 = time.time()
     collection.insert(entities)
@@ -50,6 +51,9 @@ def test_milvus_connector():
     collection.flush()
     end_flush = time.time() - start_flush
     print(f"Succeeded in {round(end_flush), 4} seconds!")
+
+    print("Creating Collection Index")
+    milvus_connector.create_index(field_name=field_name)  # build index for the collection just created.
 
     t0 = time.time()
     print("Loading collection...")
@@ -67,7 +71,3 @@ def test_milvus_connector():
     print(f"Result: {results}")
 
     milvus_connector.disconnect()
-
-
-# run the connection test.
-test_milvus_connector()

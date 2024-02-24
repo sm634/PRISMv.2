@@ -1,5 +1,6 @@
 import subprocess
 import argparse
+from tests.test_db_connectors import test_milvus_connector
 
 
 def run_test():
@@ -7,15 +8,10 @@ def run_test():
     parser.add_argument("test_script", help="name of the test function to run.")
     args = parser.parse_args()
 
-    test_script = args.test_script
-    test_script_path = 'tests/' + test_script
-
-    try:
-        subprocess.run(['python', test_script_path], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
-    else:
-        print(f"Script {test_script} executed successfully")
+    if args.test_script in ['test_milvus_connector.py', 'milvus', 'test_milvus', 'test_milvus_connector']:
+        # run the milvus connection test.
+        test_milvus_connector()
 
 
-run_test()
+if __name__ == '__main__':
+    run_test()
