@@ -1,6 +1,6 @@
 import yaml
 from src.article_classifier import run_article_classifier
-from src.embeddings import run_embeddings_comparison
+from src.embeddings_comparator import run_embeddings_comparison
 from src.preprocess_pipeline import run_preprocess_pipeline
 from src.text_comparator import run_text_comparator
 
