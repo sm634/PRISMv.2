@@ -9,10 +9,12 @@ config = file_handler.config
 # Define configuration options
 config_options = {
     "MODEL_PROVIDERS": ['WATSONX', 'OPENAI'],
-    "TASK": ["ARTICLE_CLASSIFIER",
-             "EMBEDDINGS_COMPARISON",
+    "TASK": ["TEXT_COMPARATOR",
+             "EMBEDDINGS_COMPARATOR",
+             "ARTICLE_CLASSIFIER",
+             "REDFLAG_ARTICLE_COMPARATOR",
              "PREPROCESS_ARTICLE",
-             "TEXT_COMPARATOR"]
+             ]
 }
 models_config = {
     'OPENAI':

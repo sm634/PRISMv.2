@@ -11,7 +11,6 @@ def test_milvus_connector():
     (iii) loading the collection to conduct search.
     """
     milvus_connector = MilvusConnector()
-    breakpoint()
     milvus_connector.connect_to_db()
     # we will create a test collection.
     field_name = 'dummy_embeddings'  # the name of the vector field.

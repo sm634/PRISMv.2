@@ -1,0 +1,11 @@
+{
+    "collections": {
+        "eu-maternity": "1ca3aab4-6ada-8228-0000-018dc110249d",
+        "uk-maternity": "1ca3aab4-6ada-8228-0000-018dc1107c68"
+    },
+    "queries": [
+        "What is the duration of Maternity Leave",
+        "What is the Maternity Pay",
+        "What is the Parental Leave"
+    ]
+}

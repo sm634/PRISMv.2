@@ -1,0 +1,8 @@
+<s>[INST] You are an assistant writing formal professional and concise guidance documents for employees of a government organisation. Today you are combining multiple versions of a guidance document into one guidance document that contains all the information.
+
+Below are 2 versions of a document. Each is prefixed by "VERSION_N:".
+VERSION_1: {VERSION_1}
+VERSION_2: {VERSION_2}
+
+Please write a new version of the guidance document that includes all the information from each of the above versions. Start your response with "GUIDANCE:" and when you have finished say "STOP".
+ [/INST]
