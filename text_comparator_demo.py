@@ -76,20 +76,20 @@ def prompt_inputs(topic1, passage1, topic2, passage2):
 
 
 # Function to run Python script with selected option
-def get_comparison(passage_1, passage_2):
+def get_comparison(prompt_file, topic1, passage_1, topic2, passage_2):
     # get the model
     model_dict = get_model()
     model = model_dict['model']
     model_name = model_dict['name']
 
     # prepare the prompt template.
-    prompt_file = file_handler.get_prompt_template(file_name='compare_text.txt')
+    prompt_file = file_handler.get_prompt_template(file_name=prompt_file)
     prompt_template = PromptTemplate.from_template(prompt_file)
 
     # instantiate model with prompt.
     llm_chain = LLMChain(prompt=prompt_template, llm=model)
     llm_analysis = llm_chain.invoke(
-        prompt_inputs('passage1', passage_1, 'passage2', passage_2)
+        prompt_inputs(topic1, passage_1, topic2, passage_2)
     )
 
     return {'model_name':model_name,
@@ -122,7 +122,11 @@ if st.button("Get Comparison"):
 
     # Generate Comparison From the LLM.
     st.subheader("LLM Analysis")
-    output_dict = get_comparison(passage_1=passage1, passage_2=passage2)
+    output_dict = get_comparison(prompt_file='compare_text.txt',
+                                 topic1='passage1',
+                                 passage_1=passage1,
+                                 topic2='passage2',
+                                 passage_2=passage2)
     # parse the output to display.
     model_used = output_dict['model_name']
     llm_response = output_dict['llm_analysis']
@@ -130,5 +134,20 @@ if st.button("Get Comparison"):
     markdown3 = f"**Analysis from {model_used}**"
     st.markdown(markdown3)
     st.write(llm_response)
+
+    # Generate Comparison From the LLM.
+    st.subheader("LLM Policy Generation")
+    output_dict = get_comparison(prompt_file='generate_policy_guidance.txt',
+                                 topic1='VERSION_1',
+                                 passage_1=passage1,
+                                 topic2='VERSION_2',
+                                 passage_2=passage2)
+    # parse the output to display.
+    model_used = output_dict['model_name']
+    llm_generation = output_dict['llm_analysis']
+    # display llm and it's response.
+    markdown4 = f"**Sample Policy Generation from {model_used}**"
+    st.markdown(markdown4)
+    st.write(llm_generation)
 
     st.subheader("Finished Analysis. Would you like to try another?")
