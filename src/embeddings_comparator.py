@@ -1,3 +1,10 @@
+"""
+Docstring
+---------
+Currently doing a single job for embedding red flag articles for human trafficing, so not very generalizable. Needs to
+reuse components form embedding_funcs and models (for embeddings).
+"""
+
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
 from utils.preprocess_text import StandardTextCleaner

@@ -1,4 +1,10 @@
-from sentence_transformers import SentenceTransformer, util
+"""
+Docstring
+---------
+Functions to create embeddings. Needs to be updated to have more models incorporated and also part of the BaseModel
+and Model Connector classes (with config for models). Currently only uses the SentenceTransformer class.
+"""
+from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from typing import List
@@ -51,7 +57,7 @@ def create_documents(collection, chunk_size=500, chunk_overlap=50, splitter='rec
     documents = text_splitter.split_documents(collection)
     documents_content = [doc.page_content for doc in documents]
     doc_metadata = [doc.metadata for doc in documents]
-    breakpoint()
+
     print("Completed chunking and creating documents and metadata.")
     return documents_content, doc_metadata
 
@@ -69,13 +75,12 @@ def create_embedding(documents: List, embedding_model='all-MiniLM-L6-v2'):
     return embeddings
 
 
-def embeddings_from_file():
+def embeddings_from_file(file_path, file_type):
     collection = get_collection_from_file(
-        file_path='data/input/UK Maternity cover policies.pdf',
-        file_type=FILE_TYPE_PDF
+        file_path=file_path,
+        file_type=file_type
     )
     documents, metadata = create_documents(collection=collection)
     embeddings = create_embedding(documents)
 
     return embeddings
-

@@ -49,11 +49,16 @@ class MilvusConnector:
         default_collection"""
         self.collection_name = collection_name
 
+    def check_collection_exists(self):
+        """A simple function that checks if the collection exists in the db and returns a boolean"""
+        check_collection = utility.has_collection(self.collection_name)
+        return check_collection
+
     def drop_collection(self, if_exists=True):
         # first connect to DB.
         # check to see if collection exists.
         if if_exists:
-            check_collection = utility.has_collection(self.collection_name)
+            check_collection = self.check_collection_exists()
             if check_collection:
                 utility.drop_collection(self.collection_name)
                 print(f"Success! collection {self.collection_name} has been dropped.")
