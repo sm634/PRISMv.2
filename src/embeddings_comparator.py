@@ -24,12 +24,12 @@ def prompt_inputs(topic1, passage1, topic2, passage2):
 
 def run_embeddings_comparator(invoke_llm=False):
     uk_maternity_embeddings = embeddings_from_file(
-        file_path='../data/input/UK Maternity cover policies.pdf',
+        file_path='data/input/UK Maternity cover policies.pdf',
         file_type='pdf',
         return_dict=True
     )
     eu_maternity_embeddings = embeddings_from_file(
-        file_path='../data/input/EU Maternity cover policies.pdf',
+        file_path='data/input/EU Maternity cover policies.pdf',
         file_type='pdf',
         return_dict=True
     )
