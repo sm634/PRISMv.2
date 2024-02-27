@@ -70,7 +70,7 @@ OPENAI:
     top_k: 5
     top_p: 0.75
     truncate_input_tokens: null
-TASK: POLICY_GENERATOR
+TASK: EMBEDDINGS_COMPARATOR
 WATSONX:
   ARTICLE_CLASSIFIER:
     decoding_method: GREEDY
