@@ -22,7 +22,7 @@ def prompt_inputs(topic1, passage1, topic2, passage2):
     return {topic1: passage1, topic2: passage2}
 
 
-def run_embeddings_comparator(invoke_llm=False):
+def run_embeddings_comparator(invoke_llm_analysis=False, invoke_llm_generation=False):
     uk_maternity_embeddings = embeddings_from_file(
         file_path='data/input/UK Maternity cover policies.pdf',
         file_type='pdf',
@@ -61,7 +61,7 @@ def run_embeddings_comparator(invoke_llm=False):
     eu_passages = [eu_doc for eu_doc in list(top_matches.values())]
     similarity_scores = [score for score in list(sim_scores.values())]
 
-    if invoke_llm:
+    if invoke_llm_analysis:
         # get the model
         model_dict = get_model()
         model = model_dict['model']
@@ -90,38 +90,50 @@ def run_embeddings_comparator(invoke_llm=False):
             llm_analyses.append(llm_analysis['text'])
 
         print("LLM Analysis complete")
-
-        """Second LLM analysis."""
-        # Get the prompt template for the second invocation of the llm.
-        prompt_file2 = file_handler.get_prompt_template(file_name='generate_policy_guidance.txt')
-        prompt_template2 = PromptTemplate.from_template(prompt_file2)
-
-        # instantiate model with prompt.
-        llm_chain = LLMChain(prompt=prompt_template2, llm=model)
-
-        # run the llm for second layer of processing on all passages.
-        llm_generation = []
-        print("Invoking LLM for Generation")
-        for i in range(0, len(uk_passages)):
-            llm_analysis = llm_chain.invoke(
-                prompt_inputs('VERSION_1', uk_passages[i], 'VERSION_2', eu_passages[i])
-            )
-            # As the llm_chain.invoke function returns a dict with the input variables and the text returned by llm,
-            # we will only keep the text that is returned.
-            llm_generation.append(llm_analysis['text'])
-
         df = pd.DataFrame(
             {
                 'eu_maternity_passage': eu_passages,
                 'uk_maternity_passage': uk_passages,
                 'similarity_score': similarity_scores,
-                'llm_analysis': llm_analyses,
-                'generated_guidance': llm_generation
+                'llm_analysis': llm_analyses
             }
         )
 
         output_file_name = f'embeddings_comparator_{model_name}'
         file_handler.save_df_to_csv(df=df, file_name=output_file_name)
+
+        if invoke_llm_generation:
+            """Second LLM analysis."""
+            # Get the prompt template for the second invocation of the llm.
+            prompt_file2 = file_handler.get_prompt_template(file_name='generate_policy_guidance.txt')
+            prompt_template2 = PromptTemplate.from_template(prompt_file2)
+
+            # instantiate model with prompt.
+            llm_chain = LLMChain(prompt=prompt_template2, llm=model)
+
+            # run the llm for second layer of processing on all passages.
+            llm_generation = []
+            print("Invoking LLM for Generation")
+            for i in range(0, len(uk_passages)):
+                llm_analysis = llm_chain.invoke(
+                    prompt_inputs('VERSION_1', uk_passages[i], 'VERSION_2', eu_passages[i])
+                )
+                # As the llm_chain.invoke function returns a dict with the input variables and the text returned by llm,
+                # we will only keep the text that is returned.
+                llm_generation.append(llm_analysis['text'])
+
+            df = pd.DataFrame(
+                {
+                    'eu_maternity_passage': eu_passages,
+                    'uk_maternity_passage': uk_passages,
+                    'similarity_score': similarity_scores,
+                    'llm_analysis': llm_analyses,
+                    'generated_guidance': llm_generation
+                }
+            )
+
+            output_file_name = f'embeddings_comparator_{model_name}'
+            file_handler.save_df_to_csv(df=df, file_name=output_file_name)
 
     else:
         df = pd.DataFrame(
