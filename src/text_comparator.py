@@ -78,7 +78,7 @@ def prep_passages_for_llms(formatted_json, clean_passages=True):
     return output
 
 
-def run_text_comparator(use_existing_outputs=True):
+def run_text_comparator(use_existing_outputs=True, invoke_llm_analysis=True, invoke_llm_generation=False):
     """
     A function to run the policy comparator.
     """
@@ -107,74 +107,123 @@ def run_text_comparator(use_existing_outputs=True):
                 save_output=True
             )
 
-        # get the model
-        model_dict = get_model()
-        model = model_dict['model']
-        model_name = model_dict['name']
+        if invoke_llm_analysis:
+            # Ensure the write LLM config is used for the comparison.
+            file_handler.get_config('models_config.yaml')
+            config = file_handler.config
+            config["TASK"] = "TEXT_COMPARATOR"
+            file_handler.write_config(config)
 
-        # get the collections and queries.
-        llm_data = prep_passages_for_llms(discovery_output)
+            # get the model
+            model_dict = get_model()
+            model = model_dict['model']
+            model_name = model_dict['name']
 
-        """First LLM analysis."""
-        # prepare the prompt template.
-        prompt_file = file_handler.get_prompt_template(file_name='compare_text.txt')
-        prompt_template = PromptTemplate.from_template(prompt_file)
+            # get the collections and queries.
+            llm_data = prep_passages_for_llms(discovery_output)
 
-        # instantiate model with prompt.
-        llm_chain = LLMChain(prompt=prompt_template, llm=model)
+            """First LLM analysis."""
+            # prepare the prompt template.
+            prompt_file = file_handler.get_prompt_template(file_name='compare_text.txt')
+            prompt_template = PromptTemplate.from_template(prompt_file)
 
-        # run the llm on all passages.
-        """THIS IS TEMPORARY CODE THAT NEEDS TO BE GENERALIZABLE FOR MORE THAN TWO PASSAGES"""
-        llm_analyses = []
-        passages_collection1 = []
-        passage_collection2 = []
-        queries = list(llm_data.keys())
+            # instantiate model with prompt.
+            llm_chain = LLMChain(prompt=prompt_template, llm=model)
 
-        print("Invoking LLM for Analysis")
-        for query in queries:
-            # prepare the passages by extracting it from the dict(list).
-            passage_1 = llm_data[query][0]
-            passage_2 = llm_data[query][1]
-            passages_collection1.append(passage_1)
-            passage_collection2.append(passage_2)
+            # run the llm on all passages.
+            """THIS IS TEMPORARY CODE THAT NEEDS TO BE GENERALIZABLE FOR MORE THAN TWO PASSAGES"""
+            llm_analyses = []
+            passages_collection1 = []
+            passage_collection2 = []
+            queries = list(llm_data.keys())
 
-            llm_analysis = llm_chain.invoke(
-                prompt_inputs('passage1', passage_1, 'passage2', passage_2)
+            print("Invoking LLM for Analysis")
+            for query in queries:
+                # prepare the passages by extracting it from the dict(list).
+                passage_1 = llm_data[query][0]
+                passage_2 = llm_data[query][1]
+                passages_collection1.append(passage_1)
+                passage_collection2.append(passage_2)
+
+                llm_analysis = llm_chain.invoke(
+                    prompt_inputs('passage1', passage_1, 'passage2', passage_2)
+                )
+                # As the llm_chain.invoke function returns a dict with the input variables and the text returned by llm,
+                # we will only keep the text that is returned.
+                llm_analyses.append(llm_analysis['text'])
+
+            print("LLM Analysis complete")
+            df = pd.DataFrame(
+                {
+                    'query': queries,
+                    'eu_maternity_passage': passages_collection1,
+                    'uk_maternity_passage': passage_collection2,
+                    'llm_analysis': llm_analyses
+                }
             )
-            # As the llm_chain.invoke function returns a dict with the input variables and the text returned by llm,
-            # we will only keep the text that is returned.
-            llm_analyses.append(llm_analysis['text'])
+            # only save output if the llm generation is not being invoked.
+            if not invoke_llm_generation:
+                output_file_name = f'text_comparator_{model_name}'
+                file_handler.save_df_to_csv(df=df, file_name=output_file_name)
 
-        print("LLM Analysis complete")
+            if invoke_llm_generation:
+                # Ensure the write LLM config is used for the policy generator.
+                config["TASK"] = "POLICY_GENERATOR"
+                file_handler.write_config(config)
+                """Second LLM analysis."""
+                # Get the prompt template for the second invocation of the llm.
+                prompt_file2 = file_handler.get_prompt_template(file_name='generate_policy_guidance.txt')
+                prompt_template2 = PromptTemplate.from_template(prompt_file2)
 
-        """Second LLM analysis."""
-        # Get the prompt template for the second invocation of the llm.
-        prompt_file2 = file_handler.get_prompt_template(file_name='generate_policy_guidance.txt')
-        prompt_template2 = PromptTemplate.from_template(prompt_file2)
+                # instantiate model with prompt.
+                llm_chain = LLMChain(prompt=prompt_template2, llm=model)
 
-        # instantiate model with prompt.
-        llm_chain = LLMChain(prompt=prompt_template2, llm=model)
+                # run the llm for second layer of processing on all passages.
+                llm_generation = []
+                print("Invoking LLM for Generation")
+                for i in range(0, len(queries)):
+                    llm_analysis = llm_chain.invoke(
+                        prompt_inputs('VERSION_1', passages_collection1[i], 'VERSION_2', passage_collection2[i])
+                    )
+                    # As the llm_chain.invoke function returns a dict with the input variables and the text returned
+                    # by llm, we will only keep the text that is returned.
+                    llm_generation.append(llm_analysis['text'])
 
-        # run the llm for second layer of processing on all passages.
-        llm_generation = []
-        print("Invoking LLM for Generation")
-        for i in range(0, len(queries)):
-            llm_analysis = llm_chain.invoke(
-                prompt_inputs('VERSION_1', passages_collection1[i], 'VERSION_2', passage_collection2[i])
+                df = pd.DataFrame(
+                    {
+                                   'query': queries,
+                                   'eu_maternity_passage': passages_collection1,
+                                   'uk_maternity_passage': passage_collection2,
+                                   'llm_analysis': llm_analyses,
+                                   'generated_guidance': llm_generation
+                    }
+                )
+
+                output_file_name = f'text_comparator_{model_name}'
+                file_handler.save_df_to_csv(df=df, file_name=output_file_name)
+
+        else:
+            llm_data = prep_passages_for_llms(discovery_output)
+
+            passages_collection1 = []
+            passage_collection2 = []
+            queries = list(llm_data.keys())
+
+            print("Invoking LLM for Analysis")
+            for query in queries:
+                # prepare the passages by extracting it from the dict(list).
+                passage_1 = llm_data[query][0]
+                passage_2 = llm_data[query][1]
+                passages_collection1.append(passage_1)
+                passage_collection2.append(passage_2)
+
+            df = pd.DataFrame(
+                {
+                    'query': queries,
+                    'eu_maternity_passage': passages_collection1,
+                    'uk_maternity_passage': passage_collection2
+                }
             )
-            # As the llm_chain.invoke function returns a dict with the input variables and the text returned by llm,
-            # we will only keep the text that is returned.
-            llm_generation.append(llm_analysis['text'])
 
-        df = pd.DataFrame(
-            {
-                           'query': queries,
-                           'eu_maternity_passage': passages_collection1,
-                           'uk_maternity_passage': passage_collection2,
-                           'llm_analysis': llm_analyses,
-                           'generated_guidance': llm_generation
-            }
-        )
-
-        output_file_name = f'text_comparator_{model_name}'
-        file_handler.save_df_to_csv(df=df, file_name=output_file_name)
+            output_file_name = f'text_comparator'
+            file_handler.save_df_to_csv(df=df, file_name=output_file_name)

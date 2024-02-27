@@ -26,10 +26,13 @@ def main():
     elif task == 'preprocess_article':
         run_preprocess_pipeline(use_standard_cleaner=False, use_denoiser=True)
     elif task == 'text_comparator':
-        run_text_comparator()
+        llm_analysis = arguments_config['TEXT_COMPARATOR']['INVOKE_LLM_ANALYSIS']
+        llm_generation = arguments_config['TEXT_COMPARATOR']['INVOKE_LLM_GENERATION']
+        run_text_comparator(invoke_llm_analysis=llm_analysis,
+                            invoke_llm_generation=llm_generation)
     elif task == 'embeddings_comparator':
-        llm_analysis = arguments_config['INVOKE_LLM_ANALYSIS']
-        llm_generation = arguments_config['INVOKE_LLM_GENERATION']
+        llm_analysis = arguments_config['EMBEDDINGS_COMPARATOR']['INVOKE_LLM_ANALYSIS']
+        llm_generation = arguments_config['EMBEDDINGS_COMPARATOR']['INVOKE_LLM_GENERATION']
         run_embeddings_comparator(invoke_llm_analysis=llm_analysis,
                                   invoke_llm_generation=llm_generation)
 
