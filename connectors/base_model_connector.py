@@ -50,8 +50,10 @@ class BaseModelConnector:
                 provider_task = self.config['OPENAI']['PREPROCESS_ARTICLE']
             elif self.task == 'text_comparator':
                 provider_task = self.config['OPENAI']['TEXT_COMPARATOR']
-            elif self.task == 'embeddings_comparison':
+            elif self.task == 'embeddings_comparator':
                 provider_task = self.config['OPENAI']['EMBEDDINGS_COMPARATOR']
+            elif self.task == 'redflag_article_comparator':
+                provider_task = self.config['OPENAI']['REDFLAG_ARTICLE_COMPARATOR']
 
         elif self.model_provider == 'watsonx':
             # get the watsonx credentials
@@ -65,8 +67,10 @@ class BaseModelConnector:
                 provider_task = self.config['WATSONX']['PREPROCESS_ARTICLE']
             elif self.task == 'text_comparator':
                 provider_task = self.config['WATSONX']['TEXT_COMPARATOR']
-            elif self.task == 'embeddings_comparison':
+            elif self.task == 'embeddings_comparator':
                 provider_task = self.config['WATSONX']['EMBEDDINGS_COMPARATOR']
+            elif self.task == 'redflag_article_comparator':
+                provider_task = self.config['WATSONX']['REDFLAG_ARTICLE_COMPARATOR']
         else:
             raise
 

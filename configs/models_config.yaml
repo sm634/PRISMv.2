@@ -14,6 +14,20 @@ OPENAI:
     top_k: null
     top_p: null
     truncate_input_tokens: null
+  EMBEDDINGS_COMPARATOR:
+    decoding_method: GREEDY
+    max_tokens: 300
+    min_tokens: 50
+    model_type: gpt-3.5-turbo-0301
+    random_seed: null
+    repetition_penalty: 1
+    return_options: null
+    stop_sequences: null
+    temperature: 0.0
+    time_limit: null
+    top_k: 5
+    top_p: 0.75
+    truncate_input_tokens: null
   PREPROCESS_ARTICLE:
     decoding_method: GREEDY
     max_tokens: 500
@@ -42,7 +56,7 @@ OPENAI:
     top_k: 5
     top_p: 0.75
     truncate_input_tokens: null
-TASK: EMBEDDINGS_COMPARATOR
+TASK: TEXT_COMPARATOR
 WATSONX:
   ARTICLE_CLASSIFIER:
     decoding_method: GREEDY
@@ -57,6 +71,20 @@ WATSONX:
     time_limit: null
     top_k: null
     top_p: null
+    truncate_input_tokens: null
+  EMBEDDINGS_COMPARATOR:
+    decoding_method: GREEDY
+    max_tokens: 300
+    min_tokens: 50
+    model_type: gpt-3.5-turbo-0301
+    random_seed: null
+    repetition_penalty: 1
+    return_options: null
+    stop_sequences: null
+    temperature: 0.0
+    time_limit: null
+    top_k: 5
+    top_p: 0.75
     truncate_input_tokens: null
   PREPROCESS_ARTICLE:
     decoding_method: SAMPLE
