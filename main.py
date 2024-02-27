@@ -21,7 +21,7 @@ def main():
     elif task == 'text_comparator':
         run_text_comparator()
     elif task == 'embeddings_comparator':
-        run_embeddings_comparator(invoke_llm=False)
+        run_embeddings_comparator(invoke_llm=True)
 
     print("Task Complete")
 

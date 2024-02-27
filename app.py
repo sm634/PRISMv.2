@@ -42,6 +42,9 @@ if model_provider == 'OPENAI':
     model = st.selectbox("Model", models_config["OPENAI"]["model"])
 elif model_provider == 'WATSONX':
     model = st.selectbox("Model", models_config["WATSONX"]["model"])
+else:
+    model_provider = "WATSONX"
+    model = "LLAMA_2_70B_CHAT"
 
 
 # Function to run Python script with selected option
@@ -54,6 +57,7 @@ def run_script():
 if st.button("Run Script"):
     config["MODEL_PROVIDER"] = model_provider
     config["TASK"] = task
+    config[model_provider][task]["model_type"] = model
     st.subheader("UPDATING CONFIG")
     file_handler.write_config(config)
     st.subheader("RUNNING SCRIPT...")
