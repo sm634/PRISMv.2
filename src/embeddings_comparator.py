@@ -98,9 +98,10 @@ def run_embeddings_comparator(invoke_llm_analysis=False, invoke_llm_generation=F
                 'llm_analysis': llm_analyses
             }
         )
-
-        output_file_name = f'embeddings_comparator_{model_name}'
-        file_handler.save_df_to_csv(df=df, file_name=output_file_name)
+        # only save if generation is not enabled to ensure two outputs are not produced.
+        if not invoke_llm_generation:
+            output_file_name = f'embeddings_comparator_{model_name}'
+            file_handler.save_df_to_csv(df=df, file_name=output_file_name)
 
         if invoke_llm_generation:
             """Second LLM analysis."""
