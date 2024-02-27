@@ -76,7 +76,7 @@ WATSONX:
     decoding_method: GREEDY
     max_tokens: 300
     min_tokens: 50
-    model_type: gpt-3.5-turbo-0301
+    model_type: LLAMA_2_70B_CHAT
     random_seed: null
     repetition_penalty: 1
     return_options: null
