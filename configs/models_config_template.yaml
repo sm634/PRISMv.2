@@ -1,6 +1,6 @@
 # The general hierarchy of the config files is as follows:
 # - model provider: [OPENAI, WATSONX]
-#   - TASK: [ARTICLE_CLASSIFIER, EMBEDDINGS_COMPARISON, PREPROCESS_ARTICLE, TEXT_COMPARATOR]
+#   - TASK: [ARTICLE_CLASSIFIER, EMBEDDINGS_COMPARATOR, PREPROCESS_ARTICLE, TEXT_COMPARATOR, REDFLAG_ARTICLE_COMPARATOR]
 #       - MODEL_HYPERPARAMETERS: [model_type, max_tokens, min_tokens, decoding_method, temperature, etc.]
 #           - model_type: [gpt-3.5-turbo-0301, FLAN_UL2]
 MODEL_PROVIDER: WATSONX
@@ -34,20 +34,34 @@ OPENAI:
     top_p: null
     truncate_input_tokens: null
   TEXT_COMPARATOR:
-    model_type: gpt-3.5-turbo-0301
     decoding_method: GREEDY
     max_tokens: 300
     min_tokens: 50
-    top_k: 5
-    top_p: 0.75
+    model_type: gpt-3.5-turbo-0301
+    random_seed: null
     repetition_penalty: 1
-    temperature: 0.0
     return_options: null
     stop_sequences: null
+    temperature: 0.0
     time_limit: null
-    random_seed: null
+    top_k: 5
+    top_p: 0.75
     truncate_input_tokens: null
-TASK: TEXT_COMPARATOR
+  EMBEDDINGS_COMPARATOR:
+    decoding_method: GREEDY
+    max_tokens: 300
+    min_tokens: 50
+    model_type: gpt-3.5-turbo-0301
+    random_seed: null
+    repetition_penalty: 1
+    return_options: null
+    stop_sequences: null
+    temperature: 0.0
+    time_limit: null
+    top_k: 5
+    top_p: 0.75
+    truncate_input_tokens: null
+TASK: EMBEDDINGS_COMPARATOR
 WATSONX:
   ARTICLE_CLASSIFIER:
     decoding_method: GREEDY
@@ -64,30 +78,44 @@ WATSONX:
     top_p: null
     truncate_input_tokens: null
   PREPROCESS_ARTICLE:
-    model_type: FLAN_UL2
     decoding_method: SAMPLE
     max_tokens: 500
     min_tokens: 20
-    top_k: 4
-    top_p: 0.75
+    model_type: FLAN_UL2
+    random_seed: null
     repetition_penalty: 1
-    temperature: 0.0
     return_options: null
     stop_sequences: null
+    temperature: 0.0
     time_limit: null
-    random_seed: null
+    top_k: 4
+    top_p: 0.75
     truncate_input_tokens: null
   TEXT_COMPARATOR:
-    model_type: LLAMA_2_70B_CHAT
     decoding_method: SAMPLE
     max_tokens: 300
     min_tokens: 0
-    top_k: 4
-    top_p: 1
+    model_type: LLAMA_2_70B_CHAT
+    random_seed: null
     repetition_penalty: 1
-    temperature: 0.0
     return_options: null
     stop_sequences: null
+    temperature: 0.0
     time_limit: null
+    top_k: 4
+    top_p: 1
+    truncate_input_tokens: null
+  EMBEDDINGS_COMPARATOR:
+    decoding_method: GREEDY
+    max_tokens: 300
+    min_tokens: 50
+    model_type: gpt-3.5-turbo-0301
     random_seed: null
+    repetition_penalty: 1
+    return_options: null
+    stop_sequences: null
+    temperature: 0.0
+    time_limit: null
+    top_k: 5
+    top_p: 0.75
     truncate_input_tokens: null

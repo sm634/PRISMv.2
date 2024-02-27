@@ -12,6 +12,11 @@ from utils.models_funcs import get_model
 file_handler = FileHandler()
 file_handler.get_config()
 config = file_handler.config
+
+# set to the right provider task.
+config["TASK"] = "TEXT_COMPARATOR"
+file_handler.write_config(config)
+
 standard_text_cleaner = StandardTextCleaner()
 
 # Get collections and queries json.
