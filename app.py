@@ -51,14 +51,39 @@ else:
     model_provider = "WATSONX"
     model = "LLAMA_2_70B_CHAT"
 
-# new options for Embeddings Comparison.
+col1, col2 = st.columns([1, 1])
+# options for Embeddings Comparison.
 if task == 'EMBEDDINGS_COMPARATOR':
     invoke_llm_options = {
         "LLM Analysis": [True, False],
-        "LLM Draft Policy Generation": [True, False]
+        "LLM Draft Policy Generation": [False, True]
     }
-    invoke_llm_analysis = st.selectbox("Invoke LLM Analysis", invoke_llm_options['LLM Analysis'])
-    invoke_llm_generation = st.selectbox("Generate Draft Policy", invoke_llm_options['LLM Draft Policy Generation'])
+    with col1:
+        invoke_llm_analysis = st.selectbox("Invoke Embeddings Comparator LLM Analysis",
+                                           invoke_llm_options['LLM Analysis'])
+    with col2:
+        if invoke_llm_analysis:
+            invoke_llm_generation = st.selectbox("Generate Embeddings Comparator Draft Policy",
+                                                 invoke_llm_options['LLM Draft Policy Generation'])
+        else:
+            invoke_llm_generation = False
+
+col3, col4 = st.columns([1, 1])
+# options for Text Comparison.
+if task == 'TEXT_COMPARATOR':
+    invoke_llm_options = {
+        "LLM Analysis": [True, False],
+        "LLM Draft Policy Generation": [False, True]
+    }
+    with col3:
+        invoke_llm_analysis = st.selectbox("Invoke Text Comparator LLM Analysis",
+                                           invoke_llm_options['LLM Analysis'])
+    with col4:
+        if invoke_llm_analysis:
+            invoke_llm_generation = st.selectbox("Generate Text Comparator Draft Policy",
+                                                 invoke_llm_options['LLM Draft Policy Generation'])
+        else:
+            invoke_llm_generation = False
 
 
 # Function to run Python script with selected option
@@ -72,9 +97,14 @@ if st.button("Run Script"):
     config["MODEL_PROVIDER"] = model_provider
     config["TASK"] = task
     config[model_provider][task]["model_type"] = model
+    # save arguments.
     if task == 'EMBEDDINGS_COMPARATOR':
-        arguments_config['INVOKE_LLM_ANALYSIS'] = invoke_llm_analysis
-        arguments_config['INVOKE_LLM_GENERATION'] = invoke_llm_generation
+        arguments_config['EMBEDDINGS_COMPARATOR']['INVOKE_LLM_ANALYSIS'] = invoke_llm_analysis
+        arguments_config['EMBEDDINGS_COMPARATOR']['INVOKE_LLM_GENERATION'] = invoke_llm_generation
+        file_handler.write_config(arguments_config, config_file_name='arguments_passer.yaml')
+    if task == 'TEXT_COMPARATOR':
+        arguments_config['TEXT_COMPARATOR']['INVOKE_LLM_ANALYSIS'] = invoke_llm_analysis
+        arguments_config['TEXT_COMPARATOR']['INVOKE_LLM_GENERATION'] = invoke_llm_generation
         file_handler.write_config(arguments_config, config_file_name='arguments_passer.yaml')
     st.subheader("UPDATING CONFIG")
     file_handler.write_config(config)

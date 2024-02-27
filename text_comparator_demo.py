@@ -13,10 +13,6 @@ file_handler = FileHandler()
 file_handler.get_config()
 config = file_handler.config
 
-# set to the right provider task.
-config["TASK"] = "TEXT_COMPARATOR"
-file_handler.write_config(config)
-
 standard_text_cleaner = StandardTextCleaner()
 
 # Get collections and queries json.
@@ -41,7 +37,6 @@ st.subheader("Collections to Use")
 
 # Create a container for the layout
 col1, col2 = st.columns([1, 1])
-
 # Text on the left
 with col1:
     collection_1 = st.selectbox("Collection 1", config_options['Collections'])
@@ -53,6 +48,20 @@ with col2:
 st.subheader("Query to Run")
 # the config needs to be updated based on what is selected in the UI here.
 queries_selector = st.selectbox("Queries", config_options['Queries'])
+
+# We will also add config options for arguments.
+col3, col4 = st.columns([1, 1])
+invoke_llm_options = {
+    "LLM Analysis": [True, False],
+    "LLM Draft Policy Generation": [False, True]
+}
+with col3:
+    invoke_llm_analysis = st.selectbox("Invoke LLM Analysis", invoke_llm_options['LLM Analysis'])
+with col4:
+    if invoke_llm_analysis:
+        invoke_llm_generation = st.selectbox("Generate Draft Policy", invoke_llm_options['LLM Draft Policy Generation'])
+    else:
+        invoke_llm_generation = False
 
 
 def get_most_relevant_discovery_passage(query, collection_id):
@@ -97,7 +106,7 @@ def get_comparison(prompt_file, topic1, passage_1, topic2, passage_2):
         prompt_inputs(topic1, passage_1, topic2, passage_2)
     )
 
-    return {'model_name':model_name,
+    return {'model_name': model_name,
             'llm_analysis': llm_analysis['text']}
 
 
@@ -110,7 +119,7 @@ if st.button("Get Comparison"):
     query = queries_selector
 
     # Retrieve and show Passage 1.
-    markdown1 = f"**PASSAGE 1 {collection_1} SEARCH**"
+    markdown1 = f"**PASSAGE FROM {collection_1} SEARCH**"
     st.markdown(markdown1)
     # show the first passage returned.
     passage1 = get_most_relevant_discovery_passage(query=query, collection_id=collection_id1)
@@ -125,34 +134,47 @@ if st.button("Get Comparison"):
     passage2 = standard_text_cleaner.remove_special_characters(passage2)
     st.write(passage2)
 
-    # Generate Comparison From the LLM.
-    st.subheader("LLM Analysis")
-    output_dict = get_comparison(prompt_file='compare_text.txt',
-                                 topic1='passage1',
-                                 passage_1=passage1,
-                                 topic2='passage2',
-                                 passage_2=passage2)
-    # parse the output to display.
-    model_used = output_dict['model_name']
-    llm_response = output_dict['llm_analysis']
-    # display llm and it's response.
-    markdown3 = f"**Analysis from {model_used}**"
-    st.markdown(markdown3)
-    st.write(llm_response)
+    if invoke_llm_analysis:
+        # set to the right provider task.
+        config["TASK"] = "TEXT_COMPARATOR"
+        file_handler.write_config(config)
 
-    # Generate Comparison From the LLM.
-    st.subheader("LLM Policy Generation")
-    output_dict = get_comparison(prompt_file='generate_policy_guidance.txt',
-                                 topic1='VERSION_1',
-                                 passage_1=passage1,
-                                 topic2='VERSION_2',
-                                 passage_2=passage2)
-    # parse the output to display.
-    model_used = output_dict['model_name']
-    llm_generation = output_dict['llm_analysis']
-    # display llm and it's response.
-    markdown4 = f"**Sample Policy Generation from {model_used}**"
-    st.markdown(markdown4)
-    st.write(llm_generation)
+        # Generate Comparison From the LLM.
+        st.subheader("LLM Analysis")
+        output_dict = get_comparison(prompt_file='compare_text.txt',
+                                     topic1='passage1',
+                                     passage_1=passage1,
+                                     topic2='passage2',
+                                     passage_2=passage2)
+        # parse the output to display.
+        model_used = output_dict['model_name']
+        llm_response = output_dict['llm_analysis']
+        # display llm and it's response.
+        markdown3 = f"**Analysis from {model_used}**"
+        st.markdown(markdown3)
+        st.write(llm_response)
 
-    st.subheader("Finished Analysis. Would you like to try another?")
+        if invoke_llm_generation:
+            config["TASK"] = "POLICY_GENERATOR"
+            file_handler.write_config(config)
+
+            # Generate Comparison From the LLM.
+            st.subheader("LLM Policy Generation")
+            output_dict = get_comparison(prompt_file='generate_policy_guidance.txt',
+                                         topic1='VERSION_1',
+                                         passage_1=passage1,
+                                         topic2='VERSION_2',
+                                         passage_2=passage2)
+            # parse the output to display.
+            model_used = output_dict['model_name']
+            llm_generation = output_dict['llm_analysis']
+            # display llm and it's response.
+            markdown4 = f"**Sample Policy Generation from {model_used}**"
+            st.markdown(markdown4)
+            st.write(llm_generation)
+
+            st.subheader("Finished Analysis. Would you like to try another?")
+        else:
+            st.subheader("Finished Analysis. Would you like to try another?")
+    else:
+        st.subheader("Finished Analysis. Would you like to try another?")

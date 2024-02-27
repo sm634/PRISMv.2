@@ -12,15 +12,21 @@ file_handler = FileHandler()
 class StandardTextCleaner:
 
     @staticmethod
-    def remove_special_characters(text):
+    def remove_special_characters(text,
+                                  remove_markdown=True,
+                                  remove_special_chars=True,
+                                  remove_non_english=False):
         # remove markdown
-        text = re.sub(r'<[^>]+>', '', text)
+        if remove_markdown:
+            text = re.sub(r'<[^>]+>', '', text)
 
         # Remove special characters
-        text = re.sub(r'[^a-zA-Z0-9\s@.]', '', text)
+        if remove_special_chars:
+            text = re.sub(r'[^a-zA-Z0-9\s@.]', '', text)
 
         # Remove non-English characters
-        text = ''.join(char for char in text if char in string.ascii_letters or char.isspace() or char in "@.")
+        if remove_non_english:
+            text = ''.join(char for char in text if char in string.ascii_letters or char.isspace() or char in "@.")
 
         return text
 
